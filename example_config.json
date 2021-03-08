@@ -1,0 +1,83 @@
+{
+  "mining": {
+    "enabled": true,
+    "powGivers": [
+      "kf-kkdY_B7p-77TLn2hUhM6QidWrrsl8FYWCIvBMpZKprBtN",
+      "kf8SYc83pm5JkGt0p3TQRkuiM58O9Cr3waUtR9OoFq716lN-",
+      "kf-FV4QTxLl-7Ct3E6MqOtMt-RGXMxi27g4I645lw6MTWraV",
+      "kf_NSzfDJI1A3rOM0GQm7xsoUXHTgmdhN5-OrGD8uwL2JMvQ",
+      "kf8gf1PQy4u2kURl-Gz4LbS29eaN4sVdrVQkPO-JL80VhOe6",
+      "kf8kO6K6Qh6YM4ddjRYYlvVAK7IgyW8Zet-4ZvNrVsmQ4EOF",
+      "kf-P_TOdwcCh0AXHhBpICDMxStxHenWdLCDLNH5QcNpwMHJ8",
+      "kf91o4NNTryJ-Cw3sDGt9OTiafmETdVFUMvylQdFPoOxIsLm",
+      "kf9iWhwk9GwAXjtwKG-vN7rmXT3hLIT23RBY6KhVaynRrIK7",
+      "kf8JfFUEJhhpRW80_jqD7zzQteH6EBHOzxiOhygRhBdt4z2N"
+    ],
+    "database_path": "/path/to/store/rrd/files",
+    "graphs_path": "/path/to/make/graphs/in",
+    "machines": [
+      {
+        "config": "HP DL385 G10+, 2x Epyc 7452",
+        "hashrate": 775567000,
+        "color": "#003f5c"
+      },
+      {
+        "config": "HP DL325 G10, 1x Epyc 7502P",
+        "hashrate": 402857000,
+        "color": "#bc5090"
+      }
+    ],
+    "periods": [
+      {
+        "title": "1 day",
+        "filename": "1day",
+        "offset": "-1d"
+      },
+      {
+        "title": "3 days",
+        "filename": "3days",
+        "offset": "-3d"
+      },
+      {
+        "title": "1 week",
+        "filename": "1week",
+        "offset": "-1w"
+      }
+    ],
+    "intervals": {
+      "rrd_step": 300,
+      "complexity": 60,
+      "value": 300
+    }
+  },
+
+  "liteClient": {
+    "bin": "/yourpath/lite-client",
+    "mode": "cert|config",
+    "config": "/network/config/file/if/in/config/mode",
+    "certificate": "/ls/public/certificate/file/if/in/cert/mode",
+    "address": "host|ip:port",
+    "timeout": 16
+  },
+
+  "rrdtool": {
+    "bin": "/usr/local/bin/rrdtool"
+  },
+
+  "colorstack": [
+    "#488f31",
+    "#6aa040",
+    "#89b050",
+    "#a7c162",
+    "#c5d275",
+    "#e2e489",
+    "#fff59f",
+    "#fcd983",
+    "#f8bc6c",
+    "#f49e5c",
+    "#ec8052",
+    "#e2604f",
+    "#d43d51"
+  ]
+
+}
