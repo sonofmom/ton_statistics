@@ -51,6 +51,43 @@
     }
   },
 
+  "accounting": {
+    "enabled": true,
+    "miners": {
+      "miner1": [
+        "wallet-m1-1",
+        "wallet-m1-2",
+        "wallet-m1-N"
+      ],
+      "miner2": [
+        "wallet-m2-1"
+      ]
+    },
+    "database_path": "/path/to/store/rrd/files",
+    "graphs_path": "/path/to/make/graphs/in",
+    "periods": [
+      {
+        "title": "1 week",
+        "filename": "1week",
+        "offset": "-1w"
+      },
+      {
+        "title": "1 month",
+        "filename": "1month",
+        "offset": "-1m"
+      },
+      {
+        "title": "3 months",
+        "filename": "3months",
+        "offset": "-3m"
+      }
+    ],
+    "intervals": {
+      "rrd_step": 14400,
+      "value": 14400
+    }
+  },
+
   "liteClient": {
     "bin": "/yourpath/lite-client",
     "mode": "cert|config",
@@ -61,7 +98,7 @@
   },
 
   "rrdtool": {
-    "bin": "/usr/local/bin/rrdtool"
+    "bin": "/yourpath/rrdtool"
   },
 
   "colorstack": [
@@ -79,5 +116,4 @@
     "#e2604f",
     "#d43d51"
   ]
-
 }

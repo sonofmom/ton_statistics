@@ -58,8 +58,18 @@ def collector():
         for giver in config["mining"]["powGivers"]:
             givers.append(TonContract.TonContract(lc, "powGiver", giver))
 
+    miners = {}
+    if config["accounting"]["enabled"]:
+        for miner in config["accounting"]["miners"].keys():
+            wallets = []
+            for wallet in config["accounting"]["miners"][miner]:
+                wallets.append(TonContract.TonContract(lc, "wallet", wallet))
+
+            miners[miner] = wallets
+
     ts_complexity = 0
     ts_value = 0
+    ts_accounting = 0
     while True:
 
         if givers:
@@ -128,6 +138,71 @@ def collector():
                         "update",
                         file,
                         "N:{}:{}:{}".format(int(giver.get_value_grams()),int(giver.get_value_grams()),int(giver.get_pow_complexity()))
+                    ]
+
+                    process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if process.returncode:
+                        toolbox.console_log("Failure")
+                        toolbox.console_log(process.stdout.decode("utf-8"))
+                        toolbox.console_log(process.stderr.decode("utf-8"))
+                        sys.exit(1)
+                    update = False
+
+
+        if miners:
+            ## Check for DB, create if needed
+            ##
+            for miner in miners.keys():
+                file = toolbox.get_giver_db_file(config["accounting"]["database_path"], miner)
+                if not toolbox.check_file_exists(file):
+                    toolbox.console_log("Creating miner DB {}".format(file))
+                    args = [
+                        config["rrdtool"]["bin"],
+                        "create",
+                        file,
+                        "--start",
+                        str(round(time.time())),
+                        "DS:value:GAUGE:14400:U:U",
+                        "DS:increase:DERIVE:14400:U:U",
+                        "RRA:AVERAGE:0.5:8:1008",
+                        "RRA:AVERAGE:0.5:2:1008",
+                        "RRA:AVERAGE:0.5:1:1008",
+                        "RRA:MIN:0.5:8:1008",
+                        "RRA:MIN:0.5:2:1008",
+                        "RRA:MIN:0.5:1:1008",
+                        "RRA:MAX:0.5:8:1008",
+                        "RRA:MAX:0.5:2:1008",
+                        "RRA:MAX:0.5:1:1008"
+                    ]
+                    process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if process.returncode:
+                        toolbox.console_log("Failure")
+                        toolbox.console_log(process.stdout.decode("utf-8"))
+                        toolbox.console_log(process.stderr.decode("utf-8"))
+                        sys.exit(1)
+
+            update = False
+            if (time.time() - ts_accounting) > config["accounting"]["intervals"]["value"]:
+                toolbox.console_log("Refreshing accounting")
+                ts_accounting = time.time()
+                for miner in miners.keys():
+                    for wallet in miners[miner]:
+                        wallet.refresh_value()
+                update = True
+
+            if update:
+                toolbox.console_log("Updating databases")
+                for miner in miners.keys():
+                    total = 0
+                    for wallet in miners[miner]:
+                        total += wallet.get_value_grams()
+
+                    file = toolbox.get_giver_db_file(config["accounting"]["database_path"], miner)
+                    args = [
+                        config["rrdtool"]["bin"],
+                        "update",
+                        file,
+                        "N:{}:{}".format(int(total),int(total))
                     ]
 
                     process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
