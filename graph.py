@@ -69,7 +69,7 @@ def graph():
                 "--width=800",
                 "--height=200",
                 "--title=Givers "+period["title"]+" bleed rate",
-                "--vertical-label=Grams per second",
+                "--vertical-label=TONs per second",
                 "--font=DEFAULT:12:Courier New",
                 "--font=TITLE:18:Courier New",
             ]
