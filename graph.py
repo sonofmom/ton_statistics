@@ -70,7 +70,7 @@ def graph():
                 "--height=200",
                 "--title=Givers "+period["title"]+" bleed rate",
                 "--vertical-label=TONs per second",
-                "--font=DEFAULT:12:Courier New",
+                "--font=DEFAULT:10:Courier New",
                 "--font=TITLE:18:Courier New",
             ]
 
@@ -223,7 +223,7 @@ def graph():
                 db_file = toolbox.get_giver_db_file(config["mining"]["database_path"], giver.get_shortname())
                 if idx == 0:
                     args.append("COMMENT:"
-                                +"Giver\t\t    Minimum  Average  Maximum\t  Est.Total\t      Balance\tDepleted in\\n"
+                                +"Giver\t\t    Minimum   Average  Maximum   Est.Total    Balance\t\tDepleted in\\n"
                                 )
                     args.append("COMMENT:------------------------------------------------------------------------------------------\\n")
                     stack = ""
@@ -336,7 +336,7 @@ def graph():
                 "--height=200",
                 "--title=Estimated mining "+period["title"]+" hash rate",
                 "--vertical-label=HPS",
-                "--font=DEFAULT:12:Courier New",
+                "--font=DEFAULT:10:Courier New",
                 "--font=TITLE:18:Courier New",
             ]
 
@@ -423,7 +423,7 @@ def graph():
                         )
 
             args.append("COMMENT:"
-                        +"\t\t      Minimum       Average        Maximum\\n"
+                        +"\t      Minimum       Average        Maximum\\n"
                         )
             args.append("COMMENT:------------------------------------------------------------------------------------------\\n")
 
@@ -471,7 +471,7 @@ def graph():
                 "--height=200",
                 "--title=Estimated mining hashrate to hardware "+period["title"],
                 "--vertical-label=Machines",
-                "--font=DEFAULT:12:Courier New",
+                "--font=DEFAULT:10:Courier New",
                 "--font=TITLE:18:Courier New",
             ]
 
@@ -561,7 +561,7 @@ def graph():
                            )
 
             args.append("COMMENT:"
-                        +"       \tMinimum   Average   Maximum\t  Hashrate\t  Config\\n"
+                        +"       \t\tMinimum    Average    Maximum\t Hashrate\t   Config\\n"
                         )
             args.append("COMMENT:------------------------------------------------------------------------------------------\\n")
 
