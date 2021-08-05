@@ -31,17 +31,20 @@
       {
         "title": "1 day",
         "filename": "1day",
-        "offset": "-1d"
+        "offset": "-1d",
+        "mkjson": true
       },
       {
         "title": "3 days",
         "filename": "3days",
-        "offset": "-3d"
+        "offset": "-3d",
+        "mkjson": true
       },
       {
         "title": "1 week",
         "filename": "1week",
-        "offset": "-1w"
+        "offset": "-1w",
+        "mkjson": true
       }
     ],
     "intervals": {
