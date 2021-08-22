@@ -601,11 +601,10 @@ def gen_machines_graph(givers, period, imgformat, file):
         sys.exit(1)
 
 
-def read_and_remove_rrd_json(fn):
+def read_rrd_json(fn):
     file = open(fn, 'r')
     data = json.loads(' '.join(file.read().split()))
     file.close()
-    os.remove(fn)
     return data
 
 
@@ -614,9 +613,9 @@ def gen_statistics(period):
 
     result = {}
 
-    bleed_data = read_and_remove_rrd_json(config["mining"]["tmp_path"] + "/bleed_" + period["filename"] + ".json")
-    hashrate_data = read_and_remove_rrd_json(config["mining"]["tmp_path"] + "/hashrate_" + period["filename"] + ".json")
-    machines_data = read_and_remove_rrd_json(config["mining"]["tmp_path"] + "/machines_" + period["filename"] + ".json")
+    bleed_data = read_rrd_json(config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
+    hashrate_data = read_rrd_json(config["mining"]["json_path"] + "/hashrate_" + period["filename"] + ".json")
+    machines_data = read_rrd_json(config["mining"]["json_path"] + "/machines_" + period["filename"] + ".json")
 
     result["bleed_total"] = float(bleed_data["meta"]["gprints"][len(bleed_data["meta"]["gprints"])-4]["gprint"])
     result["hashrate_average"] = float(hashrate_data["meta"]["gprints"][len(hashrate_data["meta"]["gprints"])-3]["gprint"])
@@ -653,9 +652,9 @@ def graph():
             gen_machines_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
 
             if period["mkjson"]:
-                gen_bleed_graph(givers, period, "JSON", config["mining"]["tmp_path"] + "/bleed_" + period["filename"] + ".json")
-                gen_hashrate_graph(givers, period, "JSON", config["mining"]["tmp_path"] + "/hashrate_" + period["filename"] + ".json")
-                gen_machines_graph(givers, period, "JSON", config["mining"]["tmp_path"] + "/machines_" + period["filename"] + ".json")
+                gen_bleed_graph(givers, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
+                gen_hashrate_graph(givers, period, "JSON", config["mining"]["json_path"] + "/hashrate_" + period["filename"] + ".json")
+                gen_machines_graph(givers, period, "JSON", config["mining"]["json_path"] + "/machines_" + period["filename"] + ".json")
                 gen_statistics(period)
 
             print("")
