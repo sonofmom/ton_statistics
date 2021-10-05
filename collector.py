@@ -45,6 +45,11 @@ def init(argv):
             toolbox.console_log("Mining database path does not exist or is not writable.")
             sys.exit(1)
 
+    if config["accounting"]["enabled"]:
+        if not toolbox.check_path_writable(config["accounting"]["database_path"]):
+            toolbox.console_log("Accounting database path does not exist or is not writable.")
+            sys.exit(1)
+
     lc = LiteClient.LiteClient(config["liteClient"])
 
 
@@ -195,7 +200,8 @@ def collector():
                 for miner in miners.keys():
                     total = 0
                     for wallet in miners[miner]:
-                        total += wallet.get_value_grams()
+                        if wallet.get_value_grams():
+                            total += wallet.get_value_grams()
 
                     file = toolbox.get_giver_db_file(config["accounting"]["database_path"], miner)
                     args = [
