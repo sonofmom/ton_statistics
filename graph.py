@@ -452,6 +452,101 @@ def gen_hashrate_graph(givers, period, imgformat, file):
         toolbox.console_log(process.stderr.decode("utf-8"))
         sys.exit(1)
 
+def gen_complexity_graph(givers, period, imgformat, file):
+    global config
+
+    args = [
+        config["rrdtool"]["bin"],
+        "graph",
+        file,
+        "--start",
+        period["offset"],
+        "--imgformat=" + imgformat,
+        "--width=800",
+        "--height=200",
+        "--title=Estimated mining " + period["title"] + " complexity",
+        "--vertical-label=CMP",
+        "--font=DEFAULT:10:Courier New",
+        "--font=TITLE:18:Courier New",
+    ]
+
+    for idx, giver in enumerate(givers):
+        db_file = toolbox.get_giver_db_file(config["mining"]["database_path"], giver.get_shortname())
+        args.append("DEF:"
+                    + giver.get_shortname()
+                    + "-complexity-average="
+                    + db_file
+                    + ":complexity:AVERAGE"
+                    )
+
+    string = "CDEF:all-complexity-average="
+    for idx, giver in enumerate(givers):
+        if idx > 0:
+            string += ","
+        string += giver.get_shortname() + "-complexity-average"
+
+    string += "," + str(len(givers))
+    string += ",AVG"
+    args.append(string)
+
+    args.append("VDEF:"
+                + "all-complexity-average-vdef="
+                + "all-complexity-average"
+                + ",AVERAGE"
+                )
+
+    args.append("VDEF:"
+                + "all-complexity-minimum-vdef="
+                + "all-complexity-average"
+                + ",MINIMUM"
+                )
+
+    args.append("VDEF:"
+                + "all-complexity-maximum-vdef="
+                + "all-complexity-average"
+                + ",MAXIMUM"
+                )
+
+    args.append("HRULE:"
+                + "all-complexity-average-vdef#ff0000"
+                )
+
+    args.append("COMMENT:"
+                + "\t      Minimum       Average        Maximum\\n"
+                )
+    args.append("COMMENT:------------------------------------------------------------------------------------------\\n")
+
+    args.append("LINE1:"
+                + "all-complexity-average" + config["colorstack"][0]
+                + ":Complexity"
+                )
+
+    args.append("GPRINT:"
+                + "all-complexity-minimum-vdef"
+                + ":%2.6le"
+                + ""
+                )
+
+    args.append("GPRINT:"
+                + "all-complexity-average-vdef"
+                + ":%2.6le"
+                + ""
+                )
+
+    args.append("GPRINT:"
+                + "all-complexity-maximum-vdef"
+                + ":%2.6le"
+                + "\t\t\t\t\\n"
+                )
+    args.append("COMMENT:TS\: " + toolbox.get_datetime_string().replace(':', '\:') + "\\n")
+
+    process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if process.returncode:
+        toolbox.console_log("Failure")
+        toolbox.console_log(process.stdout.decode("utf-8"))
+        toolbox.console_log(process.stderr.decode("utf-8"))
+        sys.exit(1)
+
 
 def gen_machines_graph(givers, period, imgformat, file):
     global config
@@ -576,7 +671,7 @@ def gen_machines_graph(givers, period, imgformat, file):
         args.append("GPRINT:"
                     + "machine-" + str(idx) + "-qty-minimum-vdef"
                     + ": %4.2lf"
-                    + "\t  "
+                    + "\t "
                     )
         args.append("GPRINT:"
                     + "machine-" + str(idx) + "-qty-average-vdef"
@@ -643,6 +738,10 @@ def graph():
             sys.stdout.flush()
             gen_bleed_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/bleed_" + period["filename"] + ".png")
 
+            print("Complexity", end=" ")
+            sys.stdout.flush()
+            gen_complexity_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/complexity_" + period["filename"] + ".png")
+
             print("Hashrate", end=" ")
             sys.stdout.flush()
             gen_hashrate_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/hashrate_" + period["filename"] + ".png")
@@ -650,6 +749,7 @@ def graph():
             print("Machines", end=" ")
             sys.stdout.flush()
             gen_machines_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
+
 
             if period["mkjson"]:
                 gen_bleed_graph(givers, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
