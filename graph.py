@@ -750,9 +750,9 @@ def graph():
             sys.stdout.flush()
             gen_machines_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
 
-
             if period["mkjson"]:
                 gen_bleed_graph(givers, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
+                gen_complexity_graph(givers, period, "JSON", config["mining"]["json_path"] + "/complexity_" + period["filename"] + ".json")
                 gen_hashrate_graph(givers, period, "JSON", config["mining"]["json_path"] + "/hashrate_" + period["filename"] + ".json")
                 gen_machines_graph(givers, period, "JSON", config["mining"]["json_path"] + "/machines_" + period["filename"] + ".json")
                 gen_statistics(period)
