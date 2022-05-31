@@ -202,7 +202,7 @@ def gen_bleed_graph(givers, period, imgformat, file):
     args.append("VDEF:"
                 + "all-time-to-live-vdef="
                 + "all-time-to-live"
-                + ",AVERAGE"
+                + ",MIN"
                 )
 
     args.append("VDEF:"
@@ -263,7 +263,7 @@ def gen_bleed_graph(givers, period, imgformat, file):
         args.append("GPRINT:"
                     + giver.get_shortname()
                     + "-value-last-raw"
-                    + ":AVERAGE"
+                    + ":MIN"
                     + ":%9.2lf"
                     + "\t"
                     )
@@ -271,7 +271,7 @@ def gen_bleed_graph(givers, period, imgformat, file):
         args.append("GPRINT:"
                     + giver.get_shortname()
                     + "-time-to-live"
-                    + ":AVERAGE"
+                    + ":MIN"
                     + ":   %4.0lf days"
                     + "\\n"
                     )
@@ -296,7 +296,7 @@ def gen_bleed_graph(givers, period, imgformat, file):
 
     args.append("GPRINT:"
                 + "all-value-total"
-                + ":AVERAGE"
+                + ":MIN"
                 + ":%9.2lf"
                 + "\t "
                 )
