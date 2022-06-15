@@ -7,16 +7,18 @@ import json
 import getopt
 import subprocess
 import classes.TonContract as TonContract
+import classes.LiteClient as LiteClient
 import lib.toolbox as toolbox
 from decimal import Decimal
 
 # Globals
 #
 config = None
+lc = None
 
 def init(argv):
     configfile = None
-    global config
+    global config, lc
     # Process input parameters
     opts, args = getopt.getopt(argv, "hc:", ["config="])
     for opt, arg in opts:
@@ -47,6 +49,7 @@ def init(argv):
             toolbox.console_log("Mining graphs path does not exist or is not writable.")
             sys.exit(1)
 
+    lc = LiteClient.LiteClient(config["liteClient"])
 
 def gen_bleed_graph(givers, period, imgformat, file):
     global config
@@ -723,38 +726,43 @@ def gen_statistics(period):
 
 
 def graph():
-    global config
+    global config, lc
 
     if config["mining"]["enabled"]:
         toolbox.console_log("Generating mining graphs")
 
-        givers = []
+        givers_all = []
+        givers_active = []
         for giver in config["mining"]["powGivers"]:
-            givers.append(TonContract.TonContract(None, "powGiver", giver))
+            rs = TonContract.TonContract(lc, "powGiver", giver)
+            rs.refresh_all()
+            givers_all.append(rs)
+            if (rs.get_value_grams() > 0):
+                givers_active.append(rs)
 
         for period in config["mining"]["periods"]:
             print("\t"+period["title"])
             print("\t\tBleed", end=" ")
             sys.stdout.flush()
-            gen_bleed_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/bleed_" + period["filename"] + ".png")
+            gen_bleed_graph(givers_all, period,"PNG",config["mining"]["graphs_path"] + "/bleed_" + period["filename"] + ".png")
 
             print("Complexity", end=" ")
             sys.stdout.flush()
-            gen_complexity_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/complexity_" + period["filename"] + ".png")
+            gen_complexity_graph(givers_active, period,"PNG",config["mining"]["graphs_path"] + "/complexity_" + period["filename"] + ".png")
 
             print("Hashrate", end=" ")
             sys.stdout.flush()
-            gen_hashrate_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/hashrate_" + period["filename"] + ".png")
+            gen_hashrate_graph(givers_all, period,"PNG",config["mining"]["graphs_path"] + "/hashrate_" + period["filename"] + ".png")
 
             print("Machines", end=" ")
             sys.stdout.flush()
-            gen_machines_graph(givers, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
+            gen_machines_graph(givers_all, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
 
             if period["mkjson"]:
-                gen_bleed_graph(givers, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
-                gen_complexity_graph(givers, period, "JSON", config["mining"]["json_path"] + "/complexity_" + period["filename"] + ".json")
-                gen_hashrate_graph(givers, period, "JSON", config["mining"]["json_path"] + "/hashrate_" + period["filename"] + ".json")
-                gen_machines_graph(givers, period, "JSON", config["mining"]["json_path"] + "/machines_" + period["filename"] + ".json")
+                gen_bleed_graph(givers_all, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
+                gen_complexity_graph(givers_active, period, "JSON", config["mining"]["json_path"] + "/complexity_" + period["filename"] + ".json")
+                gen_hashrate_graph(givers_all, period, "JSON", config["mining"]["json_path"] + "/hashrate_" + period["filename"] + ".json")
+                gen_machines_graph(givers_all, period, "JSON", config["mining"]["json_path"] + "/machines_" + period["filename"] + ".json")
                 gen_statistics(period)
 
             print("")
