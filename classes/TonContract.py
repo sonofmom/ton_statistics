@@ -32,7 +32,10 @@ class TonContract:
         )
 
     def get_pow_complexity(self):
-        return (2 ** 256) / self.params["pow"]["complexity"]
+        if self.params["pow"]["complexity"] is not None:
+            return (2 ** 256) / self.params["pow"]["complexity"]
+        else:
+            return None
 
     def refresh_all(self):
         self.refresh_value()

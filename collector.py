@@ -137,22 +137,22 @@ def collector():
             if update:
                 toolbox.console_log("Updating databases")
                 for giver in givers:
-                    file = toolbox.get_giver_db_file(config["mining"]["database_path"], giver.get_shortname())
-                    args = [
-                        config["rrdtool"]["bin"],
-                        "update",
-                        file,
-                        "N:{}:{}:{}".format(int(giver.get_value_grams()),int(giver.get_value_grams()),int(giver.get_pow_complexity()))
-                    ]
+                    if giver.get_pow_complexity() is not None:
+                        file = toolbox.get_giver_db_file(config["mining"]["database_path"], giver.get_shortname())
+                        args = [
+                            config["rrdtool"]["bin"],
+                            "update",
+                            file,
+                            "N:{}:{}:{}".format(int(giver.get_value_grams()),int(giver.get_value_grams()),int(giver.get_pow_complexity()))
+                        ]
 
-                    process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    if process.returncode:
-                        toolbox.console_log("Failure")
-                        toolbox.console_log(process.stdout.decode("utf-8"))
-                        toolbox.console_log(process.stderr.decode("utf-8"))
-                        sys.exit(1)
-                    update = False
-
+                        process = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        if process.returncode:
+                            toolbox.console_log("Failure")
+                            toolbox.console_log(process.stdout.decode("utf-8"))
+                            toolbox.console_log(process.stderr.decode("utf-8"))
+                            sys.exit(1)
+                        update = False
 
         if miners:
             ## Check for DB, create if needed

@@ -202,7 +202,7 @@ def gen_bleed_graph(givers, period, imgformat, file):
     args.append("VDEF:"
                 + "all-time-to-live-vdef="
                 + "all-time-to-live"
-                + ",MIN"
+                + ",AVERAGE"
                 )
 
     args.append("VDEF:"
