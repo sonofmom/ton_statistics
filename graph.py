@@ -737,7 +737,7 @@ def graph():
             rs = TonContract.TonContract(lc, "powGiver", giver)
             rs.refresh_all()
             givers_all.append(rs)
-            if (rs.get_value_grams() > 0):
+            if (rs.get_value_grams() >= 100):
                 givers_active.append(rs)
 
         for period in config["mining"]["periods"]:
