@@ -752,11 +752,11 @@ def graph():
 
             print("Hashrate", end=" ")
             sys.stdout.flush()
-            gen_hashrate_graph(givers_all, period,"PNG",config["mining"]["graphs_path"] + "/hashrate_" + period["filename"] + ".png")
+            gen_hashrate_graph(givers_active, period,"PNG",config["mining"]["graphs_path"] + "/hashrate_" + period["filename"] + ".png")
 
             print("Machines", end=" ")
             sys.stdout.flush()
-            gen_machines_graph(givers_all, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
+            gen_machines_graph(givers_active, period,"PNG",config["mining"]["graphs_path"] + "/machines_" + period["filename"] + ".png")
 
             if period["mkjson"]:
                 gen_bleed_graph(givers_all, period, "JSON", config["mining"]["json_path"] + "/bleed_" + period["filename"] + ".json")
